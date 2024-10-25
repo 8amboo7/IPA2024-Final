@@ -91,10 +91,9 @@ while True:
             responseMessage = disable() # Add
         elif command == "status":
             responseMessage = status() # Add
-        elif command == "gigabit_status":
+        elif command.startswith('gigabit_status'):
             responseMessage = gigabit_status()
-        # elif command == "showrun":
-            
+        elif command == "showrun":
             responseMessage = "Error: No command or unknown command"
         
 # 6. Complete the code to post the message to the Webex Teams room.
