@@ -13,8 +13,9 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 # from ansible_run import configure_ipv6
-# from restconf_final import create, delete, enable, disable, status
-from netconf_final import create, delete, enable, disable, status
+from restconf_final import create, delete, enable, disable, status
+# from netconf_final import create, delete, enable, disable, status
+# from netmiko_final import gigabit_status
 
 #######################################################################################
 # 2. Assign the Webex access token to the variable ACCESS_TOKEN using environment variables.
@@ -90,11 +91,10 @@ while True:
             responseMessage = disable() # Add
         elif command == "status":
             responseMessage = status() # Add
-        # elif command == "gigabit_status":
-        #     <!!!REPLACEME with code for gigabit_status command!!!>
+        elif command == "gigabit_status":
+            responseMessage = gigabit_status()
         # elif command == "showrun":
-        #     <!!!REPLACEME with code for showrun command!!!>
-        else:
+            
             responseMessage = "Error: No command or unknown command"
         
 # 6. Complete the code to post the message to the Webex Teams room.

@@ -1,34 +1,44 @@
 from netmiko import ConnectHandler
-from pprint import pprint
-
-device_ip = "<!!!REPLACEME with router IP address!!!>"
-username = "admin"
-password = "cisco"
-
-device_params = {
-    "device_type": "<!!!REPLACEME with device type for netmiko!!!>",
-    "ip": device_ip,
-    "username": username,
-    "password": password,
-}
-
+import re
 
 def gigabit_status():
-    ans = ""
-    with ConnectHandler(**device_params) as ssh:
-        up = 0
-        down = 0
-        admin_down = 0
-        result = ssh.send_command("<!!!REPLACEME with proper command!!!>", use_textfsm=True)
-        for status in result:
-            if <!!!Write code here!!!>:
-                <!!!Write code here!!!>
-                if <!!!Write code here!!!> == "up":
-                    up += 1
-                elif <!!!Write code here!!!> == "down":
-                    down += 1
-                elif <!!!Write code here!!!> == "administratively down":
-                    admin_down += 1
-        ans = <!!!Write code here!!!>
-        pprint(ans)
-        return ans
+    device = {
+        'device_type': 'cisco_ios',
+        'host': '10.0.15.184',
+        'username': 'admin',
+        'password': 'cisco',
+        'port': 22,
+        
+        # 'secret': 'your_secret',  # ใช้ secret หากต้องการเข้าถึงโหมด enable
+    }
+    
+    net_connect = ConnectHandler(**device)
+    net_connect.enable()
+    
+    output = net_connect.send_command("show interfaces status", use_textfsm=True)
+    
+    interface_status = {}
+    for interface in output:
+        if re.match(r'^GigabitEthernet\d+', interface['port']):
+            interface_status[interface['port']] = interface['status'].lower()
+    
+    up_count = 0
+    down_count = 0
+    admin_down_count = 0
+    status_message = []
+    
+    for interface, status in interface_status.items():
+        if status == "up":
+            status_message.append(f"{interface} up")
+            up_count += 1
+        elif status == "down":
+            status_message.append(f"{interface} down")
+            down_count += 1
+        elif "administratively down" in status:
+            status_message.append(f"{interface} administratively down")
+            admin_down_count += 1
+
+    result_message = ", ".join(status_message) + f" -> {up_count} up, {down_count} down, {admin_down_count} administratively down"
+    
+    net_connect.disconnect()
+    return result_message
