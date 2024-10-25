@@ -1,24 +1,30 @@
 #######################################################################################
-# Yourname:
-# Your student ID:
+# Yourname: Saruta Torat
+# Your student ID: 65070211
 # Your GitHub Repo: 
 
 #######################################################################################
 # 1. Import libraries for API requests, JSON formatting, time, os, (restconf_final or netconf_final), netmiko_final, and ansible_final.
 
-<!!!REPLACEME with code for libraries>
+import requests
+import json
+import time
+import os
+from dotenv import load_dotenv
+load_dotenv()
+# from ansible_run import configure_ipv6
 
 #######################################################################################
 # 2. Assign the Webex access token to the variable ACCESS_TOKEN using environment variables.
 
-ACCESS_TOKEN = os.environ."<!!!REPLACEME with os.environ method and environment variable!!!>"
+ACCESS_TOKEN = os.environ.get("WEBEX_TEAMS_ACCESS_TOKEN")
 
 #######################################################################################
 # 3. Prepare parameters get the latest message for messages API.
 
 # Defines a variable that will hold the roomId
 roomIdToGetMessages = (
-    "<!!!REPLACEME with roomID of the IPA2024 Webex Teams room!!!>"
+    "Y2lzY29zcGFyazovL3VzL1JPT00vNTFmNTJiMjAtNWQwYi0xMWVmLWE5YTAtNzlkNTQ0ZjRkNGZi"
 )
 
 while True:
@@ -31,7 +37,7 @@ while True:
     getParameters = {"roomId": roomIdToGetMessages, "max": 1}
 
     # the Webex Teams HTTP header, including the Authoriztion
-    getHTTPHeader = {"Authorization": <!!!REPLACEME!!!>}
+    getHTTPHeader = {"Authorization": ACCESS_TOKEN}
 
 # 4. Provide the URL to the Webex Teams messages API, and extract location from the received message.
     
@@ -39,9 +45,9 @@ while True:
     # - Use the GetParameters to get only the latest message.
     # - Store the message in the "r" variable.
     r = requests.get(
-        "<!!!REPLACEME with URL of Webex Teams Messages API!!!>",
-        params=<!!!REPLACEME with HTTP parameters!!!>,
-        headers=<!!!REPLACEME with HTTP headers!!!>,
+        'https://webexapis.com/v1/messages',
+        params=getParameters,
+        headers=getHTTPHeader,
     )
     # verify if the retuned HTTP status code is 200/OK
     if not r.status_code == 200:
@@ -65,28 +71,27 @@ while True:
 
     # check if the text of the message starts with the magic character "/" followed by your studentID and a space and followed by a command name
     #  e.g.  "/66070123 create"
-    if message.startswith("<!!!REPLACEME!!!>"):
-
+    if message.find("/65070211") == 0:
         # extract the command
-        command = <!!!REPLACEME!!!>
+        command = message.split(" ")[1]
         print(command)
 
 # 5. Complete the logic for each command
 
         if command == "create":
-            <!!!REPLACEME with code for create command!!!>     
+            responseMessage = create() # Add 
         elif command == "delete":
-            <!!!REPLACEME with code for delete command!!!>
+            responseMessage = delete() # Add
         elif command == "enable":
-            <!!!REPLACEME with code for enable command!!!>
+            responseMessage = enable() # Add
         elif command == "disable":
-            <!!!REPLACEME with code for disable command!!!>
+            responseMessage = disable() # Add
         elif command == "status":
-            <!!!REPLACEME with code for status command!!!>
-         elif command == "gigabit_status":
-            <!!!REPLACEME with code for gigabit_status command!!!>
-        elif command == "showrun":
-            <!!!REPLACEME with code for showrun command!!!>
+            responseMessage = status() # Add
+        # elif command == "gigabit_status":
+        #     <!!!REPLACEME with code for gigabit_status command!!!>
+        # elif command == "showrun":
+        #     <!!!REPLACEME with code for showrun command!!!>
         else:
             responseMessage = "Error: No command or unknown command"
         
