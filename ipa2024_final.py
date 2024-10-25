@@ -16,6 +16,7 @@ load_dotenv()
 from restconf_final import create, delete, enable, disable, status
 # from netconf_final import create, delete, enable, disable, status
 from netmiko_final import gigabit_status
+from ansible_final import run_ansible_playbook
 
 #######################################################################################
 # 2. Assign the Webex access token to the variable ACCESS_TOKEN using environment variables.
@@ -94,6 +95,8 @@ while True:
         elif command.startswith('gigabit_status'):
             responseMessage = gigabit_status()
         elif command == "showrun":
+            responseMessage = run_ansible_playbook()
+        else:
             responseMessage = "Error: No command or unknown command"
         
 # 6. Complete the code to post the message to the Webex Teams room.
@@ -144,16 +147,9 @@ while True:
         #         "Incorrect reply from Webex Teams API. Status code: {}".format(r.status_code)
         #     )
 
-
+#######################################################################################
 
         postHTTPHeaders = HTTPHeaders = {"Authorization": ACCESS_TOKEN, "Content-Type": "application/json"} # Add
-        
-# 6. Complete the code to post the message to the Webex Teams room.
-        
-        # the Webex Teams HTTP headers, including the Authoriztion and Content-Type
-        # The Webex Teams POST JSON data
-        # - "roomId" is is ID of the selected room
-        # - "text": is the responseMessage assembled above
         postData = {"roomId": roomIdToGetMessages, "text": responseMessage}
 
         # Post the call to the Webex Teams message API.

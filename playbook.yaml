@@ -1,0 +1,15 @@
+- name: Backup Running Config
+  hosts: routers
+  gather_facts: no
+  tasks:
+    - name: Save running config
+      ios_config:
+        backup: yes
+        backup_options:
+          filename: "show_run_65070211_CSR1KV-Pod1-4.txt"
+      register: config_backup
+
+    - name: Check if backup was successful
+      fail:
+        msg: "Error: Backup failed"
+      when: config_backup.failed
