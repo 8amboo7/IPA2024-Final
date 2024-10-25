@@ -15,7 +15,7 @@ load_dotenv()
 # from ansible_run import configure_ipv6
 from restconf_final import create, delete, enable, disable, status
 # from netconf_final import create, delete, enable, disable, status
-# from netmiko_final import gigabit_status
+from netmiko_final import gigabit_status
 
 #######################################################################################
 # 2. Assign the Webex access token to the variable ACCESS_TOKEN using environment variables.

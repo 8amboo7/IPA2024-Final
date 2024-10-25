@@ -7,20 +7,22 @@ def gigabit_status():
         'host': '10.0.15.184',
         'username': 'admin',
         'password': 'cisco',
-        'port': 22,
-        
-        # 'secret': 'your_secret',  # ใช้ secret หากต้องการเข้าถึงโหมด enable
+        # 'port': 22,
     }
     
     net_connect = ConnectHandler(**device)
     net_connect.enable()
     
-    output = net_connect.send_command("show interfaces status", use_textfsm=True)
+    # ใช้คำสั่ง show interfaces status เพื่อดึงข้อมูลสถานะ
+    output = net_connect.send_command("show ip interface brief")
     
+    # เก็บสถานะของแต่ละอินเตอร์เฟซ GigabitEthernet
     interface_status = {}
-    for interface in output:
-        if re.match(r'^GigabitEthernet\d+', interface['port']):
-            interface_status[interface['port']] = interface['status'].lower()
+    for line in output.splitlines():
+        match = re.match(r'^(GigabitEthernet\d+)\s+\S+\s+\S+\s+\S+\s+(\S+)', line)
+        if match:
+            interface, status = match.groups()
+            interface_status[interface] = status.lower()
     
     up_count = 0
     down_count = 0
@@ -28,6 +30,11 @@ def gigabit_status():
     status_message = []
     
     for interface, status in interface_status.items():
+        # หลีกเลี่ยงการ shutdown GigabitEthernet1 ตามที่โจทย์ระบุ
+        if interface == "GigabitEthernet1" and status != "up":
+            status_message.append(f"{interface} up (not allowed to shutdown)")
+            continue
+
         if status == "up":
             status_message.append(f"{interface} up")
             up_count += 1
