@@ -22,7 +22,7 @@ def create():
         "ietf-ip:ipv4": {
             "address": [
                 {
-                    "ip": "172.30.211.",
+                    "ip": "172.30.211.1",
                     "netmask": "255.255.255.0"
                 }
             ]
@@ -109,7 +109,7 @@ def disable():
         return "'Cannot shutdown: Interface loopback65070211" 
     
 def status():
-    api_url_status = "https://10.0.15.181/restconf/data/ietf-interfaces:interfaces-state/interface=Loopback65070211"
+    api_url_status = "https://10.0.15.184/restconf/data/ietf-interfaces:interfaces-state/interface=Loopback65070211"
 
     resp = requests.get(
         api_url_status, 

@@ -13,11 +13,13 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 # from ansible_run import configure_ipv6
+# from restconf_final import create, delete, enable, disable, status
+from netconf_final import create, delete, enable, disable, status
 
 #######################################################################################
 # 2. Assign the Webex access token to the variable ACCESS_TOKEN using environment variables.
 
-ACCESS_TOKEN = os.environ.get("WEBEX_TEAMS_ACCESS_TOKEN")
+ACCESS_TOKEN = os.environ.get("API_token")
 
 #######################################################################################
 # 3. Prepare parameters get the latest message for messages API.
@@ -109,33 +111,57 @@ while True:
         # Read Send a Message with Attachments Local File Attachments
         # https://developer.webex.com/docs/basics for more detail
 
-        if command == "showrun" and responseMessage == 'ok':
-            filename = "<!!!REPLACEME with show run filename and path!!!>"
-            fileobject = <!!!REPLACEME with open file!!!>
-            filetype = "<!!!REPLACEME with Content-type of the file!!!>"
-            postData = {
-                "roomId": <!!!REPLACEME!!!>,
-                "text": "show running config",
-                "files": (<!!!REPLACEME!!!>, <!!!REPLACEME!!!>, <!!!REPLACEME!!!>),
-            }
-            postData = MultipartEncoder(<!!!REPLACEME!!!>)
-            HTTPHeaders = {
-            "Authorization": ACCESS_TOKEN,
-            "Content-Type": <!!!REPLACEME with postData Content-Type!!!>,
-            }
-        # other commands only send text, or no attached file.
-        else:
-            postData = {"roomId": <!!!REPLACEME!!!>, "text": <!!!REPLACEME!!!>}
-            postData = json.dumps(postData)
+        # if command == "showrun" and responseMessage == 'ok':
+        #     filename = "<!!!REPLACEME with show run filename and path!!!>"
+        #     fileobject = <!!!REPLACEME with open file!!!>
+        #     filetype = "<!!!REPLACEME with Content-type of the file!!!>"
+        #     postData = {
+        #         "roomId": <!!!REPLACEME!!!>,
+        #         "text": "show running config",
+        #         "files": (<!!!REPLACEME!!!>, <!!!REPLACEME!!!>, <!!!REPLACEME!!!>),
+        #     }
+        #     postData = MultipartEncoder(<!!!REPLACEME!!!>)
+        #     HTTPHeaders = {
+        #     "Authorization": ACCESS_TOKEN,
+        #     "Content-Type": <!!!REPLACEME with postData Content-Type!!!>,
+        #     }
+        # # other commands only send text, or no attached file.
+        # else:
+        #     postData = {"roomId": <!!!REPLACEME!!!>, "text": <!!!REPLACEME!!!>}
+        #     postData = json.dumps(postData)
 
-            # the Webex Teams HTTP headers, including the Authoriztion and Content-Type
-            HTTPHeaders = {"Authorization": <!!!REPLACEME!!!>, "Content-Type": <!!!REPLACEME!!!>}   
+        #     # the Webex Teams HTTP headers, including the Authoriztion and Content-Type
+        #     HTTPHeaders = {"Authorization": <!!!REPLACEME!!!>, "Content-Type": <!!!REPLACEME!!!>}   
+
+        
+        # Post the call to the Webex Teams message API.
+        # r = requests.post(
+        #     "https://webexapis.com/v1/messages",
+        #     # data=postData,
+        #     # headers=HTTPHeaders,
+        # )
+        # if not r.status_code == 200:
+        #     raise Exception(
+        #         "Incorrect reply from Webex Teams API. Status code: {}".format(r.status_code)
+        #     )
+
+
+
+        postHTTPHeaders = HTTPHeaders = {"Authorization": ACCESS_TOKEN, "Content-Type": "application/json"} # Add
+        
+# 6. Complete the code to post the message to the Webex Teams room.
+        
+        # the Webex Teams HTTP headers, including the Authoriztion and Content-Type
+        # The Webex Teams POST JSON data
+        # - "roomId" is is ID of the selected room
+        # - "text": is the responseMessage assembled above
+        postData = {"roomId": roomIdToGetMessages, "text": responseMessage}
 
         # Post the call to the Webex Teams message API.
         r = requests.post(
-            "<!!!REPLACEME with URL of Webex Teams Messages API!!!>",
-            data=<!!!REPLACEME!!!>,
-            headers=<!!!REPLACEME!!!>,
+            "https://webexapis.com/v1/messages",
+            data=json.dumps(postData),
+            headers=postHTTPHeaders,
         )
         if not r.status_code == 200:
             raise Exception(
